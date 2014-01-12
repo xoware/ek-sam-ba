@@ -53,7 +53,7 @@
 //------------------------------------------------------------------------------
 
 /// Number of NandFlash models inside the list.
-#define NandFlashModelList_SIZE         58
+#define NandFlashModelList_SIZE         59
 
 //------------------------------------------------------------------------------
 //         Exported variables

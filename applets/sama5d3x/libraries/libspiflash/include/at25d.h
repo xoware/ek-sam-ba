@@ -74,5 +74,9 @@ extern unsigned char AT25D_Read(
     unsigned int size,
     unsigned int address);
 
+extern void AT25D_Enter4ByteMode(At25 *pAt25);
+
+extern void AT25D_Exit4ByteMode(At25 *pAt25);
+
 #endif // #ifndef AT25D_H
 

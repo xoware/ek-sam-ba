@@ -50,6 +50,14 @@ ifeq (sam3n1,$(CHIP))
 BOARD_DIR = at91sam3n1-ek
 endif
 
+ifeq (sam3n0,$(CHIP))
+BOARD_DIR = at91sam3n0-ek
+endif
+
+ifeq (sam3n00,$(CHIP))
+BOARD_DIR = at91sam3n00-ek
+endif
+
 MEMORIES = sram
 
 # Trace level used for compilation

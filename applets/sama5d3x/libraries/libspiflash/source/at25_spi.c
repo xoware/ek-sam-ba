@@ -133,6 +133,7 @@ static const At25Desc at25Devices[] = {
     {"W25X20"     , 0x001230EF,      256 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
     {"W25X40"     , 0x001330EF,      512 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
     {"W25X80"     , 0x001430EF, 1 * 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
+    {"W25Q256"    , 0x001940EF, 32* 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
     /* Manufacturer: Macronix */
     {"MX25L512"   , 0x001020C2,       64 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
     {"MX25L3205"  , 0x001620C2, 4 * 1024 * 1024, 256, 64 * 1024, AT25_BLOCK_ERASE_64K},
@@ -142,7 +143,9 @@ static const At25Desc at25Devices[] = {
     {"SST25VF040" , 0x008D25BF,      512 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
     {"SST25VF080" , 0x008E25BF, 1 * 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
     {"SST25VF032" , 0x004A25BF, 4 * 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
-    {"SST25VF064" , 0x004B25BF, 8 * 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K}
+    {"SST25VF064" , 0x004B25BF, 8 * 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K},
+    /* Manufacturer: Micron */
+    {"N25Q256"    , 0x0019BA20, 32* 1024 * 1024, 256,  4 * 1024, AT25_BLOCK_ERASE_4K}
 };
 
 /*----------------------------------------------------------------------------
@@ -240,13 +243,25 @@ uint8_t AT25_SendCommand(
 
         return AT25_ERROR_BUSY;
     }
-
-    /* Store command and address in command buffer */
-    pAt25->pCmdBuffer[0] = (cmd & 0x000000FF)
-                           | ((address & 0x0000FF) << 24)
-                           | ((address & 0x00FF00) << 8)
-                           | ((address & 0xFF0000) >> 8);
-
+    pAt25->pCmdBuffer[0] = (cmd & 0x000000FF);
+    if( cmdSize > 1) {
+        /* Store command and address in command buffer  */
+        if ( pAt25->fourbytemode == 1){
+            pAt25->pCmdBuffer[0] = (cmd & 0x000000FF)
+                                   | ((address & 0x0000FF00) << 16)
+                                   | ((address & 0x00FF0000))
+                                   | ((address & 0xFF000000) >> 16);
+            pAt25->pCmdBuffer[1] = (address & 0x000000FF);
+            if ( (cmd != AT45_CONTINUOUS_READ) && (cmd != AT25_SEQUENTIAL_PROGRAM_1) ){
+                cmdSize++;
+            }
+        } else { 
+            pAt25->pCmdBuffer[0] = (cmd & 0x000000FF)
+                                   | ((address & 0x0000FF) << 24)
+                                   | ((address & 0x00FF00) << 8)
+                                   | ((address & 0xFF0000) >> 8);
+       }
+    }
     /* Update the SPI transfer descriptor */
     pCommand = &(pAt25->command);
     pCommand->cmdSize = cmdSize;

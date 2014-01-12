@@ -89,7 +89,7 @@ if { [ catch { source "$libPath(extLib)/$target(board)/lowlevelinit.tcl"} errMsg
         exit
     }
 }
-LOWLEVEL::Init
+#LOWLEVEL::Init
 
 ################################################################################
 ## SRAM
@@ -118,7 +118,7 @@ array set at91sam3x8_sram1 {
 ## SDRAM
 ################################################################################
 array set at91sam3x8_sdram {
-    dftDisplay  1
+    dftDisplay  0
     dftDefault  0
     dftAddress  0x70000000
     dftSize     "$GENERIC::memorySize"
@@ -141,7 +141,7 @@ array set at91sam3x8_sdram_scripts {
 ## NANDFLASH
 ################################################################################
 array set at91sam3x8_nandflash {
-    dftDisplay  1
+    dftDisplay  0
     dftDefault  0
     dftAddress  0x0
     dftSize     "$GENERIC::memorySize"
@@ -188,23 +188,23 @@ set FLASH::appletMailboxAddr      0x20001040
 set FLASH::appletFileName         "$libPath(extLib)/$target(board)/applet-flash-sam3x8.bin"
 
 # Initialize SDRAM
-if {[catch {GENERIC::Init $RAM::appletAddr $RAM::appletMailboxAddr $RAM::appletFileName [list $::target(comType) $::target(traceLevel) $BOARD::extRamVdd $BOARD::extRamType $BOARD::extRamDataBusWidth $BOARD::extDDRamModel]} dummy_err] } {
-    set continue no
-    if {$commandLineMode == 0} {
-        set continue [tk_messageBox -title "External RAM init" -message "External RAM initialization failed.\nExternal RAM access is required to run applets.\nContinue anyway ?" -icon warning -type yesno]
-    } else {
-        puts "-E- Error during external RAM initialization."
-        puts "-E- External RAM access is required to run applets."
-        puts "-E- Connection abort"
-    }
-    # Close link
-    if {$continue == no} {
-        TCL_Close $target(handle)
-        exit
-    }
-} else {
-    puts "-I- External RAM initialized"
-}
+#if {[catch {GENERIC::Init $RAM::appletAddr $RAM::appletMailboxAddr $RAM::appletFileName [list $::target(comType) $::target(traceLevel) $BOARD::extRamVdd $BOARD::extRamType $BOARD::extRamDataBusWidth $BOARD::extDDRamModel]} dummy_err] } {
+#    set continue no
+#    if {$commandLineMode == 0} {
+#        set continue [tk_messageBox -title "External RAM init" -message "External RAM initialization failed.\nExternal RAM access is required to run applets.\nContinue anyway ?" -icon warning -type yesno]
+#    } else {
+#        puts "-E- Error during external RAM initialization."
+#        puts "-E- External RAM access is required to run applets."
+#        puts "-E- Connection abort"
+#    }
+#    # Close link
+#    if {$continue == no} {
+#        TCL_Close $target(handle)
+#        exit
+#    }
+#} else {
+#    puts "-I- External RAM initialized"
+#}
 
 # Initialize FLASH
 if {[catch {FLASH::Init} dummy_err]} {

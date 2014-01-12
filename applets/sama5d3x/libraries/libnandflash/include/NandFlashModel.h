@@ -102,6 +102,8 @@ struct NandFlashModel {
     uint8_t options;
     /** Size of the data area of a page, in bytes. */
     uint16_t pageSizeInBytes;
+    /** Size of the spare area of a page, in bytes. */
+    uint16_t spareSizeInBytes;
     /** Size of the device in MB. */
     uint16_t deviceSizeInMegaBytes;
     /** Size of one block in kilobytes. */

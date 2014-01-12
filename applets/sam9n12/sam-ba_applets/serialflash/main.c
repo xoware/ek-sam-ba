@@ -249,6 +249,7 @@ int main(int argc, char **argv)
         pMailbox->argument.outputInit.bufferAddress = (uint32_t) &_end ;
         /* Read the JEDEC ID of the device to identify it */
         jedecId = AT25D_ReadJedecId(&at25);
+        TRACE_INFO("-- jedecId is %x \n\r", jedecId);
         if (AT25_FindDevice(&at25, jedecId) == 0) {
             pMailbox->status = APPLET_DEV_UNKNOWN;
             pMailbox->argument.outputInit.bufferSize = 0;
@@ -287,6 +288,10 @@ int main(int argc, char **argv)
                 TRACE_INFO("No enought memory to load buffer.\n\r");
                 goto exit;
             } 
+            if (AT25_Size(&at25) > (16* 1024 * 1024)) {
+               TRACE_INFO("Enter 4-byte address mode.\n\r");
+               AT25D_Enter4ByteMode(&at25);
+            }
             pMailbox->argument.outputInit.bufferSize = bufferSize;
             pMailbox->argument.outputInit.memorySize = AT25_Size(&at25);
             TRACE_INFO("%s blockSize : 0x%lx bufferAddr : 0x%lx\n\r",

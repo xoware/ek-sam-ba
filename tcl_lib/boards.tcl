@@ -1,7 +1,7 @@
 #  ----------------------------------------------------------------------------
 #          SAM Software Package License
 #  ----------------------------------------------------------------------------
-#  Copyright (c) 2012, Atmel Corporation
+#  Copyright (c) 2013, Atmel Corporation
 #
 #  All rights reserved.
 #
@@ -34,6 +34,8 @@ array set boards {
     "at91sam3x2-ek"     "at91sam3x2-ek/at91sam3x2-ek.tcl"
     "at91sam3x4-ek"     "at91sam3x4-ek/at91sam3x4-ek.tcl"
     "at91sam3x8-ek"     "at91sam3x8-ek/at91sam3x8-ek.tcl"
+    "at91sam3n00-ek"    "at91sam3n00-ek/at91sam3n00-ek.tcl"
+    "at91sam3n0-ek"     "at91sam3n0-ek/at91sam3n0-ek.tcl"
     "at91sam3n1-ek"     "at91sam3n1-ek/at91sam3n1-ek.tcl"
     "at91sam3n2-ek"     "at91sam3n2-ek/at91sam3n2-ek.tcl"
     "at91sam3n4-ek"     "at91sam3n4-ek/at91sam3n4-ek.tcl"
@@ -44,11 +46,18 @@ array set boards {
     "at91sam3s8-ek"     "at91sam3s8-ek/at91sam3s8-ek.tcl"
     "at91sam3sd8-ek"    "at91sam3sd8-ek/at91sam3sd8-ek.tcl"
     "at91sam3s16-ek"    "at91sam3s16-ek/at91sam3s16-ek.tcl"
+    "at91sam4l-ek"      "at91sam4l-ek/at91sam4l-ek.tcl"
+    "at91sam4e16-ek"    "at91sam4e16-ek/at91sam4e16-ek.tcl"
     "at91sam4s4-ek"     "at91sam4s4-ek/at91sam4s4-ek.tcl"
     "at91sam4s8-ek"     "at91sam4s8-ek/at91sam4s8-ek.tcl"
     "at91sam4s16-ek"    "at91sam4s16-ek/at91sam4s16-ek.tcl"
     "at91sam4sd32-ek"   "at91sam4sd32-ek/at91sam4sd32-ek.tcl"
     "sam4s-xpld"        "at91sam4s16-ek/at91sam4s16-ek.tcl"
+    "samd20_xplained_pro" "samd20_xplained_pro/samd20_xplained_pro.tcl"
+    "at91sam4n8-xpro"   "at91sam4n8-xpro/at91sam4n8-xpro.tcl"
+    "at91sam4n16-xpro"  "at91sam4n16-xpro/at91sam4n16-xpro.tcl"
+    "at91sam4c16-ek"    "at91sam4c16-ek/at91sam4c16-ek.tcl"   
+    "at91sam4c8-ek"     "at91sam4c8-ek/at91sam4c8-ek.tcl"
     "at91sam3u1-ek"     "at91sam3u1-ek/at91sam3u1-ek.tcl"
     "at91sam3u2-ek"     "at91sam3u2-ek/at91sam3u2-ek.tcl"
     "at91sam3u4-ek"     "at91sam3u4-ek/at91sam3u4-ek.tcl"

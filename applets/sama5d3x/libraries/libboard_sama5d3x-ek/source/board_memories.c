@@ -426,6 +426,7 @@ void BOARD_ConfigureSdram( void )
  */
 void BOARD_ConfigureNandFlash( uint8_t busWidth )
 {
+    PMC_EnablePeripheral(ID_SMC);
     SMC->SMC_CS_NUMBER[3].SMC_SETUP = 0
                     | SMC_SETUP_NWE_SETUP(1)
                     | SMC_SETUP_NCS_WR_SETUP(1)

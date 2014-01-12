@@ -38,7 +38,7 @@ OUTPUT_ARCH(arm)
 MEMORY
 {
     romcodesram (W!RX) : ORIGIN = 0x20000000, LENGTH = 0x0800
-    sram (W!RX) : ORIGIN = 0x20000800, LENGTH = 0x00001800 /* sram, 8K - sizeof(romcodesram) */
+    sram (W!RX) : ORIGIN = 0x20001000, LENGTH = 0x00001000 /* sram, 8K - sizeof(romcodesram) */
 }
 
 /* Entry point */

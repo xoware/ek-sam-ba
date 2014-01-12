@@ -479,6 +479,7 @@ static uint8_t WritePageWithPmecc(
     TRACE_DEBUG("WritePage(B#%d:P#%d)\r\n", block, page);
     /* Calculate physical address of the page */
     rowAddress = block * NandFlashModel_GetBlockSizeInPages(MODEL(raw)) + page;
+    if (isNandTrimffs() && page >= NandGetTrimPage()) return 0;
 
     if(isSmcOpNfcEn() && isSmcOpNfcSramEn() && data)
         Smc_Data_Array_Out(busWidth, SMC_TRANS_HOST_EN, (uint8_t *)data, pageDataSize);
@@ -507,20 +508,21 @@ static uint8_t WritePageWithPmecc(
                           COMMAND_WRITE_1, 0, 0, rowAddress);
     }
     if(!isSmcOpNfcSramEn()) Smc_Data_Array_Out(busWidth, 0, (uint8_t *)data, pageDataSize);
-    Smc_Issue_Cle_Ale(raw, SMC_CLE_WRITE_EN|SMC_ALE_ROW_EN, COMMAND_RANDOM_IN, 0, 0, eccStartaddr);
+    Smc_Issue_Cle_Ale(raw, SMC_CLE_WRITE_EN|SMC_ALE_COL_EN, COMMAND_RANDOM_IN, 0, eccStartaddr, 0);
     /* Wait until the kernel of the PMECC is not busy */
     while((SMC->SMC_PMECCSR) & SMC_PMECCSR_BUSY);
     bytesNumberPerSector = (pPmeccDescriptor->eccSizeByte) / nbSectorsPerPage;
     sectorNumber = 1 << ((pPmeccDescriptor->pageSize >> 8) & 0x3);
-    if (isNandTrimffs() && page >= NandGetTrimPage()) {
+    //if (isNandTrimffs() && page >= NandGetTrimPage()) {
         /* This behaviour was found to fix both UBI and JFFS2 images written to
            cleanly erased NAND partitions*/
-        for(sectorIndex = 0; sectorIndex < sectorNumber; sectorIndex++)
+      //  for(sectorIndex = 0; sectorIndex < sectorNumber; sectorIndex++)
+        //{
+          //  for(byteNumber = 0; byteNumber < bytesNumberPerSector; byteNumber++)
+            //    eccTable[sectorIndex * bytesNumberPerSector + byteNumber] = 0xFF;
+        //}
+    //} else 
         {
-            for(byteNumber = 0; byteNumber < bytesNumberPerSector; byteNumber++)
-                eccTable[sectorIndex * bytesNumberPerSector + byteNumber] = 0xFF;
-        }
-    } else {
         /* Read all ECC registers */
         for(sectorIndex = 0; sectorIndex < sectorNumber; sectorIndex++){
             for(byteNumber = 0; byteNumber < bytesNumberPerSector; byteNumber++)
@@ -591,7 +593,7 @@ static uint8_t WritePageWithHwEcc(
        // SMC_NFC_Wait_HammingReady();
         SMC_ECC_GetEccParity(pageDataSize, eccTable, busWidth);
 
-        Smc_Issue_Cle_Ale(raw, SMC_CLE_WRITE_EN|SMC_ALE_ROW_EN, COMMAND_RANDOM_IN, 0, 0, pageDataSize + 2);
+        Smc_Issue_Cle_Ale(raw, SMC_CLE_WRITE_EN|SMC_ALE_COL_EN, COMMAND_RANDOM_IN, 0, pageDataSize, 0);
 
         Smc_Data_Array_Out(busWidth, 0,(uint8_t *) eccTable, 16);
         Smc_Issue_Cle_Ale(raw, SMC_CLE_WRITE_EN, COMMAND_WRITE_2, 0, 0, 0);
@@ -682,7 +684,9 @@ uint32_t RawNandFlash_ReadId(const struct RawNandFlash *raw)
 {
     uint32_t chipId, chipId2;
     TRACE_DEBUG("RawNandFlash_ReadId()\n\r");
-    Smc_Issue_Cle_Ale(raw, SMC_ALE_ROW_EN, COMMAND_READID, 0, 0, 0);
+    //Smc_Issue_Cle_Ale(raw, SMC_ALE_ROW_EN, COMMAND_READID, 0, 0, 0);
+    WRITE_COMMAND(raw, COMMAND_READID);
+    WRITE_ADDRESS(raw, 0);
     chipId  = READ_DATA8(raw);
     chipId |= READ_DATA8(raw) << 8;
     chipId |= READ_DATA8(raw) << 16;

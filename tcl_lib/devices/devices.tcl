@@ -1,7 +1,7 @@
 #  ----------------------------------------------------------------------------
 #          SAM Software Package License
 #  ----------------------------------------------------------------------------
-#  Copyright (c) 2012, Atmel Corporation
+#  Copyright (c) 2013, Atmel Corporation
 #
 #  All rights reserved.
 #
@@ -28,43 +28,43 @@
 
 
 # CIDR addresses
-# 0x400E0740 for AT91SAM3U, SAM4S
+# 0x400E0740 for AT91SAM3U, SAM4S, SAM4L
 # 0x400E0940 for SAM3X
 # 0xFFFFEE40 for AT91SAM9263 and AT91CAP9
 # 0xFFFFF240 for other devices
+set cidr_secure [list 0xfc069040]
 set cidr_addresses [list 0xfffff240 0xffffee40]
 set sam3_cidr_addresses [list 0x400e0640 0x400e0740 0x400E0940]
-
-
+set sam0_cidr_addresses [list 0x41002018]
 
 # When reading the chip ID on the device, SAM-BA masks the 5 LS bits (device version)
 # and then compares it with the following array. So the chip IDs written here must
 # have the version field at 0.
 array set devices {
-    0x283A0760 at91sam3a2
-    0x283B0960 at91sam3a4
-    0x283E0A60 at91sam3a8
-    0x284A0760 at91sam3x2
-    0x285A0760 at91sam3x2
-    0x286A0760 at91sam3x2
-    0x284B0960 at91sam3x4
-    0x285B0960 at91sam3x4
-    0x286B0960 at91sam3x4
-    0x284E0A60 at91sam3x8
-    0x285E0A60 at91sam3x8
-    0x286E0A60 at91sam3x8
-    0x283A0730 at91sam3a2
-    0x283B0930 at91sam3a4
-    0x283E0A30 at91sam3a8
-    0x284A0730 at91sam3x2
-    0x285A0730 at91sam3x2
-    0x286A0730 at91sam3x2
-    0x284B0930 at91sam3x4
-    0x285B0930 at91sam3x4
-    0x286B0930 at91sam3x4
-    0x284E0A30 at91sam3x8
-    0x285E0A30 at91sam3x8
-    0x286E0A30 at91sam3x8
+    0x283a0760 at91sam3a2
+    0x283b0960 at91sam3a4
+    0x283e0a60 at91sam3a8
+    0x284a0760 at91sam3x2
+    0x285a0760 at91sam3x2
+    0x286a0760 at91sam3x2
+    0x284b0960 at91sam3x4
+    0x285b0960 at91sam3x4
+    0x286b0960 at91sam3x4
+    0x284e0a60 at91sam3x8
+    0x285e0a60 at91sam3x8
+    0x286e0a60 at91sam3x8
+    0x283a0730 at91sam3a2
+    0x283b0930 at91sam3a4
+    0x283e0a30 at91sam3a8
+    0x284a0730 at91sam3x2
+    0x285a0730 at91sam3x2
+    0x286a0730 at91sam3x2
+    0x284b0930 at91sam3x4
+    0x285b0930 at91sam3x4
+    0x286b0930 at91sam3x4
+    0x284e0a30 at91sam3x8
+    0x285e0a30 at91sam3x8
+    0x286e0a30 at91sam3x8
     0x28890560 at91sam3s1
     0x28990560 at91sam3s1
     0x28a90560 at91sam3s1
@@ -102,6 +102,14 @@ array set devices {
     0x29580560 at91sam3n1
     0x29480560 at91sam3n1
     0x29380560 at91sam3n1
+    0x29580360 at91sam3n0
+    0x29480360 at91sam3n0
+    0x29380360 at91sam3n0
+    0x29450260 at91sam3n00
+    0x29350260 at91sam3n00
+    0xab0a09e0 at91sam4l,sam4l
+    0xab0a07e0 at91sam4l,sam4l
+    0xa3cc0ce0 at91sam4e16
     0x288b09e0 at91sam4s4
     0x289b09e0 at91sam4s4
     0x28ab09e0 at91sam4s4
@@ -113,6 +121,13 @@ array set devices {
     0x28ac0ce0 at91sam4s16,sam4s
     0x29a70ee0 at91sam4sd32
     0x29970ee0 at91sam4sd32
+    0xa64c0ce0 at91sam4c16
+    0xa64c0ae0 at91sam4c8
+    0x29460ce0 at91sam4n16
+    0x29560ce0 at91sam4n16
+    0x293b0ae0 at91sam4n8
+    0x294b0ae0 at91sam4n8
+    0x295b0ae0 at91sam4n8
     0x170a0940 at91sam7a3
     0x260a0940 at91sam7a3
     0x27330540 at91sam7l64
@@ -155,6 +170,8 @@ array set devices {
     0x83770940 at91cap7
     0x039a03a0 at91cap9
     0x8a5c07c1 at91sama5d3x
+    0x8a5c0760 at91sama5d4x
+    0x10001100 samd20j18,samd20
 }
 
 array set EmbeddedProcessor {
@@ -174,12 +191,14 @@ array set ArchitectureIdentifier {
     0x37 CAP7
     0x39 CAP9
     0x3B CAP11
+    0x3c CM4P2
     0x40 AT91x40
     0x42 AT91x42
     0x55 AT91x55
     0x60 AT91SAM7Axx
     0x61 AT91SAM7AQxx
     0x63 AT91x63
+    0x64 AT91SAM4Cx
     0x70 AT91SAM7Sxx
     0x71 AT91SAM7XCxx
     0x72 AT91SAM7SExx
@@ -203,5 +222,18 @@ array set ArchitectureIdentifier {
     0x99 ATSAM3SDxB
     0x9a ATSAM3SDxC
     0xa5 SAMA5
+    0xb0 ATSAM4Lxxxx
     0xf0 AT75Cxx
+}
+
+
+array set EmbeddedProcessor_sam0 {
+    0x00 CM0
+    0x01 CM0+
+    0x02 CM3
+    0x03 CM4
+}
+
+array set ArchitectureIdentifier_sam0 {
+    0x00 SAMD20J18
 }

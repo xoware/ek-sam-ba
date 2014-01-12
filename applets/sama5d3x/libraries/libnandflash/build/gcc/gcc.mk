@@ -37,7 +37,7 @@ CFLAGS += -UDYN_TRACES
 endif
 
 ifeq (ON,$(PMECC_ALGO_ROM))
-CFLAGS += -DUSE_PMECC_EMBEDDED_ALGO
+#CFLAGS += -DUSE_PMECC_EMBEDDED_ALGO
 endif
 
 # To reduce application size use only integer printf function.

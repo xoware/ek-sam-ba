@@ -47,13 +47,13 @@ all: $(BOARD)
 .PHONY: $(BOARD)
 $(BOARD):
 	@echo --- Making $(BOARD)
-	@$(MAKE)  CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) DEBUG=1 $(SUBMAKE_OPTIONS) -f pmecc.mk
-	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) $(SUBMAKE_OPTIONS) -f pmecc.mk
+	@$(MAKE)  CHIP=$(CHIP) DYN=$(DYN)  DEBUG=1 $(SUBMAKE_OPTIONS) -f pmecc.mk
+	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN) $(SUBMAKE_OPTIONS) -f pmecc.mk
 
 .PHONY: clean
 clean:
 	@echo --- Cleaning $(BOARD)
-	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) $(SUBMAKE_OPTIONS) -f pmecc.mk $@
-	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) DEBUG=1 $(SUBMAKE_OPTIONS) -f pmecc.mk $@
+	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN) $(SUBMAKE_OPTIONS) -f pmecc.mk $@
+	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN)  DEBUG=1 $(SUBMAKE_OPTIONS) -f pmecc.mk $@
 
 

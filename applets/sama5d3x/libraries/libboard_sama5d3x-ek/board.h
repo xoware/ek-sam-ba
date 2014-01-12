@@ -431,35 +431,25 @@
  * - \ref BOARD_TOUCHSCREEN_DEBOUNCE
  */
 
-#if defined(BOARD_REV_A_EK)
-/** MCI0 Card detect pin definition. (PD13) */
-#define BOARD_MCI0_PIN_CD       {PIO_PD13, PIOD, ID_PIOD, PIO_INPUT, PIO_PULLUP}
+
+/** MCI0 Card detect pin definition. (PD17) */
+#define BOARD_MCI0_PIN_CD       {(1<<17), PIOD, ID_PIOD, PIO_INPUT, PIO_PULLUP}
 /** MCI0 has no WriteProtect pin */
-/** MCI1 Card detect pin definition. (PD14) */
-#define BOARD_MCI1_PIN_CD       {PIO_PD14, PIOD, ID_PIOD, PIO_INPUT, PIO_PULLUP}
+/** MCI1 Card detect pin definition. (PD18) */
+#define BOARD_MCI1_PIN_CD       {(1<<18), PIOD, ID_PIOD, PIO_INPUT, PIO_PULLUP}
 /** MCI1 Write Protect pin Always to GND */
-#elif defined(BOARD_REV_A_VB)
-/** MCI0 Card detect pin definition. (PC0) */
-#define BOARD_MCI0_PIN_CD       {PIO_PC0, PIOC, ID_PIOC, PIO_INPUT, PIO_PULLUP}
-/** MCI0 has no WriteProtect pin */
-/** MCI1 Card detect pin definition. (PC1) */
-#define BOARD_MCI1_PIN_CD       {PIO_PC1, PIOC, ID_PIOC, PIO_INPUT, PIO_PULLUP}
-/** MCI1 Write Protect pin Always to GND */
-#elif defined(BOARD_REV_B_EK)
-/** MCI0 Card detect pin definition. (PD15) */
-#define BOARD_MCI0_PIN_CD       {PIO_PD15, PIOD, ID_PIOD, PIO_INPUT, PIO_PULLUP}
-/** MCI0 has no WriteProtect pin */
-/** MCI1 Card detect pin definition. (PD14) */
-#define BOARD_MCI1_PIN_CD       {PIO_PD14, PIOD, ID_PIOD, PIO_INPUT, PIO_PULLUP}
-/** MCI1 Write Protect pin Always to GND */
-#endif
+
+/** MCI0 power control. */
+#define BOARD_MCI0_PIN_POWER       {(1<<10), PIOB, ID_PIOB, PIO_OUTPUT_0, PIO_PULLUP}
+/** MCI1 power control */
+#define BOARD_MCI1_PIN_POWER       {(1<<12), PIOB, ID_PIOB, PIO_OUTPUT_0, PIO_PULLUP}
 
 /** Total number of MCI interface */
 #define BOARD_NUM_MCI           2
-/** MCI0 IO pins definition. (PA15-PA20) */
-#define BOARD_MCI0_PINS         {0x001F8000, PIOA, ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+/** MCI0 IO pins definition. (PD0-PD9) */
+#define BOARD_MCI0_PINS        {0x3FF, PIOD, ID_PIOD, PIO_PERIPH_A, PIO_DEFAULT}
 /** MCI1 IO pins definition. (PA2-PA4, PA11-PA13) */
-#define BOARD_MCI1_PINS         {0x0000381C, PIOA, ID_PIOA, PIO_PERIPH_B, PIO_DEFAULT}
+#define BOARD_MCI1_PINS        {0x1F80000, PIOB, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT}
 
 
 /** Display width in pixels. */
@@ -610,6 +600,7 @@
 #include "include/board_memories.h"
 #include "include/dbgu_console.h"
 #include "include/dmad.h"
+#include "include/mcid.h"
 #include "include/dma_hardware_interface.h"
 #include "include/hamming.h"
 #include "include/math.h"

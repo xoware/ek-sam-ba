@@ -59,7 +59,7 @@
 /**
  * \file
  *
- * Implementation of Nand flash applet for SAM-BA 2.10 (sam9xx5 only).
+ * Implementation of Nand flash applet for SAM-BA 2.12 (sama5d3x only).
  *
  */
 
@@ -136,6 +136,8 @@ struct _Mailbox {
         struct {
             /** Ecc mode to be switched*/
             uint32_t eccMode;
+            /** Ecc Offset for software ecc. */
+            uint32_t sweccOffset;
 
         } inputEccMode;
 
@@ -317,6 +319,13 @@ static uint8_t nfBusWidth = 8;
 static const Pin pPinsNf[] = {PINS_NANDFLASH};
 /** Nandflash device structure. */
 static struct SkipBlockNandFlash skipBlockNf;
+
+/** Nandflash device structure. */
+static struct NandFlashModel modelListfromOnfi;
+
+/** Spare area placement scheme for 4096 byte pages */
+static struct NandSpareScheme nandScheme4096;
+
 /** Global DMA driver instance for all DMA transfers in application. */
 static sDmad dmad;
 /** Global PMECC instance. */
@@ -348,7 +357,8 @@ static nfParamHeader_t bootNfParamHeader[52];
 nfParamHeader_t currentPmeccHeader, backupPmeccHeader;
 /** Communication type with SAM-BA GUI. */
 static uint32_t comType;
-
+/** Number of bits of ECC correction */
+static uint8_t onfiEccCorrectability = 0xFF;
 /*----------------------------------------------------------------------------
  *         Definiation
  *----------------------------------------------------------------------------*/
@@ -400,6 +410,12 @@ uint32_t isValidPmeccParam (nfParamHeader_t* pPmeccHeader)
     }
     mm = (pPmeccHeader->sectorSize == 0)? 13: 14;
     nErrorCorrctionBits = eccBitReq2TT[pPmeccHeader->eccBitReq];
+
+    if (nErrorCorrctionBits < onfiEccCorrectability && onfiEccCorrectability!= 0xFF) {
+        TRACE_INFO("Warning: number of ECC bit correction asked is less than requested by the Nandflash Manufacturer (from ONFI params) (%d vs %d)\n\r"
+                    ,(unsigned int)nErrorCorrctionBits, (unsigned int)onfiEccCorrectability);
+    }
+
     nSectors = sectorSizePerPage[pPmeccHeader->nbSectorPerPage];
     if( nSectors > nbSectorsPerPage ) {
         TRACE_INFO("Invalid nSectors\n\r");
@@ -462,6 +478,7 @@ int main(int argc, char **argv)
     uint32_t bytesRead = 0;
     uint32_t nbBadBlocks = 0;
     uint32_t nbBlocks = 0;
+    uint8_t onficompatible = 0;
     /* Temporary buffer used for non block aligned read / write  */
     uint32_t tempBufferAddr;
     uint16_t block, page, offset, i;
@@ -510,10 +527,31 @@ int main(int argc, char **argv)
             goto exit;
         }
         memset(&skipBlockNf, 0, sizeof(skipBlockNf));
-        NandGetOnfiPageParam (&OnfiPageParameter);
+        if (NandGetOnfiPageParam (&OnfiPageParameter)){
+            TRACE_INFO("\tOpen NAND Flash Interface (ONFI)-compliant\n\r");
+            modelListfromOnfi.deviceId = OnfiPageParameter.manufacturerId;
+            modelListfromOnfi.options = OnfiPageParameter.onfiBusWidth? NandFlashModel_DATABUS16:NandFlashModel_DATABUS8;
+            modelListfromOnfi.pageSizeInBytes = OnfiPageParameter.onfiPageSize;
+            modelListfromOnfi.spareSizeInBytes = OnfiPageParameter.onfiSpareSize;
+            modelListfromOnfi.deviceSizeInMegaBytes = (( OnfiPageParameter.onfiPagesPerBlock \
+                                                     * OnfiPageParameter.onfiBlocksPerLun )/1024)
+                                                     * OnfiPageParameter.onfiPageSize /1024;
+            modelListfromOnfi.blockSizeInKBytes = (OnfiPageParameter.onfiPagesPerBlock \
+                                                 * OnfiPageParameter.onfiPageSize )/ 1024;
+            onfiEccCorrectability = OnfiPageParameter.onfiEccCorrectability;
+            if (onfiEccCorrectability != 0xFF) eccCorrectability = onfiEccCorrectability;
+            switch (OnfiPageParameter.onfiPageSize) {
+                case 256: modelListfromOnfi.scheme = &nandSpareScheme256; break;
+                case 512: modelListfromOnfi.scheme = &nandSpareScheme512; break;
+                case 2048: modelListfromOnfi.scheme = &nandSpareScheme2048; break;
+                case 4096: modelListfromOnfi.scheme = &nandSpareScheme4096; break;
+                case 8192: modelListfromOnfi.scheme = &nandSpareScheme8192; break;
+            }
+            onficompatible = 1;
+        }
         NandDisableInternalEcc();
         if (SkipBlockNandFlash_Initialize(&skipBlockNf,
-                                         0,
+                                         (onficompatible ? &modelListfromOnfi: 0),
                                          cmdBytesAddr,
                                          addrBytesAddr,
                                          dataBytesAddr,
@@ -536,18 +574,22 @@ int main(int argc, char **argv)
             pMailbox->argument.outputInit.bufferAddress = (uint32_t) &_end;
             /* Get device parameters */
             memSize = NandFlashModel_GetDeviceSizeInBytes(&skipBlockNf.ecc.raw.model);
+            if (NandFlashModel_GetDeviceSizeInMBytes(&skipBlockNf.ecc.raw.model) >= 0x1000) {
+                memSize = 0xFFFFFFFF - (0xFFFFFFFF % pageSize);
+            }
             blockSize = NandFlashModel_GetBlockSizeInBytes(&skipBlockNf.ecc.raw.model);
             numBlocks = NandFlashModel_GetDeviceSizeInBlocks(&skipBlockNf.ecc.raw.model);
             pageSize = NandFlashModel_GetPageDataSize(&skipBlockNf.ecc.raw.model);
             spareSize = NandFlashModel_GetPageSpareSize(&skipBlockNf.ecc.raw.model);
             numPagesPerBlock = NandFlashModel_GetBlockSizeInPages(&skipBlockNf.ecc.raw.model);
 
+
             pMailbox->status = APPLET_SUCCESS;
             pMailbox->argument.outputInit.bufferSize = blockSize;
             pMailbox->argument.outputInit.memorySize = memSize;
             pMailbox->argument.outputInit.pmeccParamHeader = 0;
-            TRACE_INFO("\tpageSize : 0x%x blockSize : 0x%x blockNb : 0x%x \n\r",  
-                        (unsigned int)pageSize, (unsigned int)blockSize, (unsigned int)numBlocks);
+            TRACE_INFO("\tpageSize : 0x%x blockSize : 0x%x blockNb : 0x%x spareSize :0x%x numPagesPerBlock :0x%x\n\r",
+                        (unsigned int)pageSize, (unsigned int)blockSize, (unsigned int)numBlocks,(unsigned int)spareSize,(unsigned int)numPagesPerBlock);
         }
         /* By default, we use pmecc, except MICRON MLC nand with internal ECC controller */
         eccOffset = 2;
@@ -719,6 +761,7 @@ int main(int argc, char **argv)
             setSmcOpEccType(SMC_ECC_NOECC);
         }
         if ( eccMode == ECC_ENABLE_SOFT) {
+            nValue = pMailbox->argument.inputEccMode.sweccOffset;
             setSmcOpEccType(SMC_ECC_SOFTWARE);
         }
         if ( eccMode == ECC_ENABLE_INTEECC) {
@@ -762,10 +805,10 @@ int main(int argc, char **argv)
         if ( eccMode != ECC_ENABLE_PMECC) {
             /* Set usePmecc as 0 in header */
             currentPmeccHeader.usePmecc = 0;
-            currentPmeccHeader.nbSectorPerPage = 2;
+            currentPmeccHeader.nbSectorPerPage = pmeccDesc.pageSize >> 8;
             currentPmeccHeader.spareSize = spareSize;
             currentPmeccHeader.eccBitReq = 0;
-            currentPmeccHeader.sectorSize = 0;
+            currentPmeccHeader.sectorSize = pmeccDesc.sectorSize;
             currentPmeccHeader.eccOffset = 0;
             currentPmeccHeader.reserved = 0;
             currentPmeccHeader.key = 12;
@@ -777,6 +820,13 @@ int main(int argc, char **argv)
             reasons) which must contain NAND and PMECC parameters used to correctly perform the read of the rest 
             of the data in the NAND. */
             for (i = 0; i< 52; i++) memcpy(&bootNfParamHeader[i], &currentPmeccHeader, sizeof(nfParamHeader_t));
+            if ( spareSize > 64) {
+                TRACE_INFO(" Configure ecc offset for SW ecc( SpareSIze > 64)");
+                if (!NandSpareScheme_build4096(&nandScheme4096, spareSize, nValue)) {
+                    modelListfromOnfi.scheme = &nandScheme4096;
+                    skipBlockNf.ecc.raw.model = modelListfromOnfi;
+                }
+            }
         }
         pMailbox->status = APPLET_SUCCESS;
     }

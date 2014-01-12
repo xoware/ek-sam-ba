@@ -65,7 +65,6 @@ if { [ catch { source "$libPath(extLib)/common/functions.tcl"} errMsg] } {
 array set memoryAlgo {
     "SRAM"         "::at91sam3n1_sram"
     "Flash"        "::at91sam3n1_flash"
-    "SerialFlash AT25/AT26"   "::at91sam3n1_serialflash"
     "Peripheral"   "::at91sam3n1_peripheral"
     "REMAP"        "::at91sam3n1_remap"
 }
@@ -125,8 +124,8 @@ array set at91sam3n1_flash_scripts {
         "Read unique ID"                       "FLASH::ReadUniqueID"
 }
 
-set FLASH::appletAddr             0x20000800
-set FLASH::appletMailboxAddr      0x20000840
+set FLASH::appletAddr             0x20001000
+set FLASH::appletMailboxAddr      0x20001040
 set FLASH::appletFileName         "$libPath(extLib)/$target(board)/applet-flash-sam3n1.bin"
 
 # Initialize FLASH

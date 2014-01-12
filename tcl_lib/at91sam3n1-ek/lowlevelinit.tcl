@@ -39,8 +39,8 @@ set mainOsc(initXal)  12000000
 
 namespace eval LOWLEVEL {
     
-    variable appletAddr          0x20000800
-    variable appletMailboxAddr   0x20000840
+    variable appletAddr          0x20001000
+    variable appletMailboxAddr   0x20001040
     variable appletFileName      "$libPath(extLib)/$target(board)/applet-lowlevelinit-sam3n1.bin"
 
 }

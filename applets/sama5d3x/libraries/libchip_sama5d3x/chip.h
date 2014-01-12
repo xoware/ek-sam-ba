@@ -54,5 +54,6 @@
 #include "include/dmac.h"
 #include "include/trace.h"
 #include "include/wdt.h"
+#include "include/hsmci.h"
 
 #endif /* _LIB_CHIP_SAMA5D3X_ */

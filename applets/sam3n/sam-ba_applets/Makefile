@@ -32,13 +32,17 @@ applets:
 	(cd lowlevelinit && $(MAKE) CHIP=sam3n4 -f Makefile clean all)
 	(cd lowlevelinit && $(MAKE) CHIP=sam3n2 -f Makefile clean all)
 	(cd lowlevelinit && $(MAKE) CHIP=sam3n1 -f Makefile clean all)
+	(cd lowlevelinit && $(MAKE) CHIP=sam3n0 -f Makefile clean all)
+	(cd lowlevelinit && $(MAKE) CHIP=sam3n00 -f Makefile clean all)
 	
 	(cd flash && $(MAKE) CHIP=sam3n4 -f Makefile clean all)
 	(cd flash && $(MAKE) CHIP=sam3n2 -f Makefile clean all)
 	(cd flash && $(MAKE) CHIP=sam3n1 -f Makefile clean all)
+	(cd flash && $(MAKE) CHIP=sam3n0 -f Makefile clean all)
+	(cd flash && $(MAKE) CHIP=sam3n00 -f Makefile clean all)
 	
 	(cd serialflash && $(MAKE) CHIP=sam3n4 -f Makefile clean all)
 	(cd serialflash && $(MAKE) CHIP=sam3n2 -f Makefile clean all)
-	(cd serialflash && $(MAKE) CHIP=sam3n1 -f Makefile clean all)
+
 	
 

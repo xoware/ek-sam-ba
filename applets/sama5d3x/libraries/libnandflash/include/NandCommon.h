@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
- * Copyright (c) 2010, Atmel Corporation
+ * Copyright (c) 2012, Atmel Corporation
  *
  * All rights reserved.
  *
@@ -35,7 +35,7 @@
 /*------------------------------------------------------------------------------ */
 /*         Definitions                                                           */
 /*------------------------------------------------------------------------------ */
-#define NF_MAXPAGESIZE_SUPPORT_2K
+//#define NF_MAXPAGESIZE_SUPPORT_2K
 
 /** \addtogroup nand_max_val NandFlash Maximum Supported Values
  * @{
@@ -49,28 +49,28 @@
 */
 
  /** Maximum number of blocks in a device */
-#define NandCommon_MAXNUMBLOCKS             1024 /*2048 */
+#define NandCommon_MAXNUMBLOCKS             4096 /*2048 */
 
  /** Maximum number of pages in one block */
-#define NandCommon_MAXNUMPAGESPERBLOCK      256 /*64 */
+#define NandCommon_MAXNUMPAGESPERBLOCK      512 //256 /*64 */
 
  /** Maximum size of the data area of one page, in bytes. */
 #if !defined(NF_MAXPAGESIZE_SUPPORT_2K)
-#define NandCommon_MAXPAGEDATASIZE          4096 /*2048 */
+#define NandCommon_MAXPAGEDATASIZE          8192 //4096 /*2048 */
 #else
 #define NandCommon_MAXPAGEDATASIZE          2048
 #endif
 
  /** Maximum size of the spare area of one page, in bytes. */
-#define NandCommon_MAXPAGESPARESIZE         256 /*128*/ /*64 */
+#define NandCommon_MAXPAGESPARESIZE         512 //256 /*128*/ /*64 */
 
  /** Maximum number of ecc bytes stored in the spare for one single page. */
-#define NandCommon_MAXSPAREECCBYTES         48 /*24 */
+#define NandCommon_MAXSPAREECCBYTES         96 /*24 */
 
  /** Maximum number of extra free bytes inside the spare area of a page. */
-#define NandCommon_MAXSPAREEXTRABYTES       78 /*38 */
+#define NandCommon_MAXSPAREEXTRABYTES       206
 
-#define NAND_MAX_PMECCSIZE                  200
+#define NAND_MAX_PMECCSIZE                  336
 /** @}*/
 /** \addtogroup nand_ec NandFlash Error Codes
  * @{

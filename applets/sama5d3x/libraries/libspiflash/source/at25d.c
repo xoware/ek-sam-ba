@@ -204,7 +204,7 @@ void AT25D_DisableWrite(At25 *pAt25)
     unsigned char error;
 
     assert(pAt25);
-
+    AT25D_EnableWrite(pAt25);
     /* Issue a write enable command */
     error = AT25_SendCommand(pAt25, AT25_WRITE_DISABLE, 1, 0, 0, 0, 0, 0);
     assert(!error);
@@ -213,6 +213,45 @@ void AT25D_DisableWrite(At25 *pAt25)
     AT25D_Wait(pAt25);
 }
 
+/**
+ * \brief Enter 4-bytes address mode
+ *
+ * \para pAt25  Pointer to an AT25 driver instance.
+ */
+void AT25D_Enter4ByteMode(At25 *pAt25)
+{
+    unsigned char error;
+
+    assert(pAt25);
+    AT25D_EnableWrite(pAt25);
+    /* Issue a write enable command */
+    error = AT25_SendCommand(pAt25, AT25_ENTER_4ADDR_MODE, 1, 0, 0, 0, 0, 0);
+    assert(!error);
+
+    /* Wait for transfer to finish */
+    AT25D_Wait(pAt25);
+    pAt25->fourbytemode = 1;
+}
+
+/**
+ * \brief Exit 4-bytes address mode
+ *
+ * \para pAt25  Pointer to an AT25 driver instance.
+ */
+void AT25D_Exit4ByteMode(At25 *pAt25)
+{
+    unsigned char error;
+
+    assert(pAt25);
+
+    /* Issue a write enable command */
+    error = AT25_SendCommand(pAt25, AT25_EXIT_4ADDR_MODE, 1, 0, 0, 0, 0, 0);
+    assert(!error);
+
+    /* Wait for transfer to finish */
+    AT25D_Wait(pAt25);
+    pAt25->fourbytemode = 0;
+}
 /**
  * \brief Unprotects the contents of the serial flash device.
  *

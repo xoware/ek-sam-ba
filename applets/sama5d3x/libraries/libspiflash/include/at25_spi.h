@@ -149,6 +149,10 @@
 /** Resume from deep power-down command code. */
 #define AT25_RES_DEEP_PDOWN         0xAB
 
+/* Enter 4-BYTE ADDRESS mode  */
+#define AT25_ENTER_4ADDR_MODE       0xB7
+/* Exit 4-BYTE ADDRESS mode  */
+#define AT25_EXIT_4ADDR_MODE        0xE9
 
 /** SPI Flash Manufacturer JEDEC ID */
 #define ATMEL_SPI_FLASH             0x1F
@@ -195,7 +199,8 @@ typedef struct _At25 {
     uint32_t pCmdBuffer[2];
     /** Polling mode */
     uint32_t pollingMode;
-
+    /** Support for 4 byte address mode */
+    uint32_t fourbytemode;
 } At25;
 
 /*----------------------------------------------------------------------------

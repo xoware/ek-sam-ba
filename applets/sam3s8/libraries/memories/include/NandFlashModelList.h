@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
- * Copyright (c) 2009, Atmel Corporation
+ * Copyright (c) 2012, Atmel Corporation
  *
  * All rights reserved.
  *
@@ -50,7 +50,7 @@
  *----------------------------------------------------------------------------*/
 
 /** Number of NandFlash models inside the list. */
-#define NandFlashModelList_SIZE         58
+#define NandFlashModelList_SIZE         59
 
 /*----------------------------------------------------------------------------
  *        Exported variables

@@ -1142,14 +1142,14 @@ proc NANDFLASH::Init {} {
 #===============================================================================
 #  proc NANDFLASH::EnableSoftwareEcc
 #-------------------------------------------------------------------------------
-proc NANDFLASH::EnableSoftwareEcc { } {
+proc NANDFLASH::EnableSoftwareEcc { offset } {
     if { $GENERIC::nandflashEccStatus == 1} {
        puts "-I- Software Ecc is already enabled"
        return 1
     }
     # Launch the SwitchEccMode.
     set dummy_err 0
-    if {[catch {set result [NANDFLASH::SwitchEccMode 0]} dummy_err]} {
+    if {[catch {set result [NANDFLASH::SwitchEccMode 0 $offset]} dummy_err]} {
         error "SwitchEccMode command has not been launched ($dummy_err)"
     }
     if { $result == 0 } {
@@ -1259,8 +1259,9 @@ proc NANDFLASH::EnableInternalEcc {} {
 #===============================================================================
 #  proc NANDFLASH::SwitchEccMode
 #-------------------------------------------------------------------------------
-proc NANDFLASH::SwitchEccMode {mode} {
+proc NANDFLASH::SwitchEccMode {mode {offset 0} } {
     global target
+    global bootHeaderValue
     variable appletAddr
     variable appletMailboxAddr
     variable appletFileName
@@ -1273,6 +1274,7 @@ proc NANDFLASH::SwitchEccMode {mode} {
     set appletAddrCmd       [expr $appletMailboxAddr]
     set appletAddrStatus    [expr $appletMailboxAddr + 0x04]
     set appletAddrArgv0     [expr $appletMailboxAddr + 0x08]
+    set appletAddrArgv1     [expr $appletMailboxAddr + 0x0c]
 
     # Write the Cmd op code in the argument area
     if {[catch {TCL_Write_Int $target(handle) $GENERIC::appletCmd(switchEccMode) $appletAddrCmd} dummy_err] } {
@@ -1281,6 +1283,13 @@ proc NANDFLASH::SwitchEccMode {mode} {
     # Write the mode for APPLET_CMD_SWITCH_ECC command in the argument area
     if {[catch {TCL_Write_Int $target(handle) $mode $appletAddrArgv0} dummy_err] } {
         error "Error Writing Applet mode  \n$dummy_err"
+    }
+
+    if { $mode == 0} {
+        # Write the ecc offset (spare size > 64) in the argument area
+        if {[catch {TCL_Write_Int $target(handle) $offset $appletAddrArgv1} dummy_err] } {
+            error "Error Writing Applet mode  \n$dummy_err"
+        }
     }
     # Launch the applet Jumping to the appletAddr
     if {[catch {set result [GENERIC::Run $GENERIC::appletCmd(switchEccMode)]} dummy_err]} {
@@ -1462,8 +1471,18 @@ proc NANDFLASH::NandHeaderValue {args} {
                    if {$GENERIC::nandflashEccStatus == 2} {
                        puts "NANDFLASH::DisablePmecc "
                        puts "NANDFLASH::EnableSoftwareEcc "
+                       puts [expr $bootHeaderValue(eccOffset)]
                        NANDFLASH::DisablePmecc
-                       NANDFLASH::EnableSoftwareEcc
+                       NANDFLASH::EnableSoftwareEcc $bootHeaderValue(eccOffset)
+                       return 1 
+                   }
+                   if {($GENERIC::nandflashEccStatus == 1) } {
+                       puts [expr $bootHeaderValue(eccOffset)]
+                       NANDFLASH::EnableSoftwareEcc $bootHeaderValue(eccOffset)
+                       return 1 
+                   }
+                   if {($GENERIC::nandflashEccStatus == 0) } {
+                       NANDFLASH::EnableSoftwareEcc $bootHeaderValue(eccOffset)
                        return 1 
                    }
                 }
@@ -2683,5 +2702,18 @@ proc OTP::Write { wordAddr data } {
     # Launch the applet Jumping to the appletAddr
     if {[catch {set result [GENERIC::Run $GENERIC::appletCmd(otpWrite)]} dummy_err]} {
         error "Applet Write OTP command has not been launched ($dummy_err)"
+    }
+}
+
+#===============================================================================
+#  proc SDMMC::Init
+#-------------------------------------------------------------------------------
+proc SDMMC::Init {Id} {
+    global target
+    puts "-I- SDMMC::Init $Id (trace level : $target(traceLevel))"
+    
+    # Load the applet to the target
+    if {[catch {GENERIC::Init $SDMMC::appletAddr $SDMMC::appletMailboxAddr $SDMMC::appletFileName [list $target(comType) $target(traceLevel) $Id ]} dummy_err] } {
+        error "Error Initializing SDMMC Applet ($dummy_err)"
     }
 }

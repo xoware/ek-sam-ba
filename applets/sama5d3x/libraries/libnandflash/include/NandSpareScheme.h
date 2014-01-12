@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
- * Copyright (c) 2010, Atmel Corporation
+ * Copyright (c) 2012, Atmel Corporation
  *
  * All rights reserved.
  *
@@ -80,6 +80,7 @@ extern const struct NandSpareScheme nandSpareScheme256;
 extern const struct NandSpareScheme nandSpareScheme512;
 extern const struct NandSpareScheme nandSpareScheme2048;
 extern const struct NandSpareScheme nandSpareScheme4096;
+extern const struct NandSpareScheme nandSpareScheme8192;
 
 /*------------------------------------------------------------------------------ */
 /*         Exported functions                                                    */
@@ -118,6 +119,11 @@ extern void NandSpareScheme_WriteExtra(
     const void *extra,
     uint8_t size,
     uint8_t offset);
+
+extern uint8_t NandSpareScheme_build4096(
+    struct NandSpareScheme *scheme,
+    uint16_t spareSize,
+    uint8_t eccOffset);
 
 #endif /*#ifndef NANDSPARESCHEME_H */
 

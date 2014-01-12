@@ -91,6 +91,9 @@ extern WEAK void LowLevelInit( void )
                  CKGR_PLLAR_MULA(65) | 
                  CKGR_PLLAR_DIVA(1), 
                  0);
+
+    PMC->PMC_PLLICPR = (0x3u << 8);
+
     PMC_SetMckPllaDiv(PMC_MCKR_PLLADIV2_DIV2);
     PMC_SetMckPrescaler(PMC_MCKR_PRES_CLOCK);
     PMC_SetMckDivider(PMC_MCKR_MDIV_PCK_DIV3);

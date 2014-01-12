@@ -304,6 +304,7 @@ uint8_t SkipBlockNandFlash_ReadBlock(
 
     /* Read all the pages of the block */
     for (i = 0; i < numPagesPerBlock; i++) {
+        
         error = EccNandFlash_ReadPage(ECC(skipBlock), block, i, data, 0);
         if (error) {
 

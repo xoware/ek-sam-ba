@@ -124,8 +124,8 @@ array set at91sam3n2_flash_scripts {
         "Read unique ID"                       "FLASH::ReadUniqueID"
 }
 
-set FLASH::appletAddr             0x20000800
-set FLASH::appletMailboxAddr      0x20000840
+set FLASH::appletAddr             0x20001000
+set FLASH::appletMailboxAddr      0x20001040
 set FLASH::appletFileName         "$libPath(extLib)/$target(board)/applet-flash-sam3n2.bin"
 
 # Initialize FLASH

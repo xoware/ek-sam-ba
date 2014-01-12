@@ -41,52 +41,11 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief Get the power of input, given a certain result, i.e. input^(power) = result.
- * \param result  a certain output we want to calculate.
- * \param input  the input of the power.
- * \return the value of "power" if succesfully find the power.
-*/
-
-#if defined(OP_BOOTSTRAP_on)
-uint32_t CALPOW(uint32_t result, uint32_t input)
-{
-    uint32_t i=0;
-    while(i<32)
-    {
-        if(result == (input << i))
-            return i;
-        i++;
-    }
-    return 0;
-}
-#endif
-
-/**
  * \brief Get the interger part of input, given a certain result, i.e.  return = result / input.
  * \param result  a certain output we want to calculate.
  * \param input  the input of the division.
  * \return the value of interger part of the result/input.
  */
- 
-#if defined(OP_BOOTSTRAP_on)
-uint32_t CALINT(uint32_t result, uint32_t input)
-{
-    uint32_t i=0;
-    uint32_t tmpInput=0;
-        
-    while(1)
-    {
-        tmpInput +=input;
-        i++;
-        if(tmpInput == result)
-            return i;
-        else if (tmpInput > result)
-        return (i-1);
-    }
-
-}
-#endif
-
 /*----------------------------------------------------------------------------
  *        Exported functions
  *----------------------------------------------------------------------------*/
@@ -132,7 +91,6 @@ uint8_t NandFlashModel_Find(
                     *     0   1   128K     || 0   1   2K
                     *     1   0   256K     || 1   0   4K
                     *     1   1   512K     || 1   1   8k */
-#if !defined(OP_BOOTSTRAP_on)
                     switch(id4 & 0x03) {
                         case 0x00: model->pageSizeInBytes = 1024; break;
                         case 0x01: model->pageSizeInBytes = 2048; break;
@@ -145,10 +103,6 @@ uint8_t NandFlashModel_Find(
                         case 0x20: model->blockSizeInKBytes = 256; break;
                         case 0x30: model->blockSizeInKBytes = 512; break;
                     }
-#else
-                    model->pageSizeInBytes = 1024 << (id4 & 0x03);
-                    model->blockSizeInKBytes = (64) << ((id4 & 0x30) >>4);
-#endif
                 }
             }
             TRACE_DEBUG("NAND Model found:\r\n");
@@ -194,32 +148,22 @@ uint8_t NandFlashModel_TranslateAccess(
     uint16_t *offset)
 {
      /* Check that access is not too big */
-    #if !defined(OP_BOOTSTRAP_on)
     if ((address + size) > NandFlashModel_GetDeviceSizeInBytes(model)) {
 
         TRACE_DEBUG("NandFlashModel_TranslateAccess: out-of-bounds access.\n\r");
         return NandCommon_ERROR_OUTOFBOUNDS;
     }
-    #endif
 
     /* Get Nand info */
     uint32_t blockSize = NandFlashModel_GetBlockSizeInBytes(model);
     uint32_t pageSize = NandFlashModel_GetPageDataSize(model);
 
     /* Translate address */
-    #if !defined(OP_BOOTSTRAP_on)
     uint16_t tmpBlock = address / blockSize;
     address -= tmpBlock * blockSize;
     uint16_t tmpPage = address / pageSize;
     address -= tmpPage * pageSize;
     uint16_t tmpOffset = address;
-    #else
-    uint16_t tmpBlock = CALINT(address, blockSize);
-    address -= tmpBlock * blockSize;
-    uint16_t tmpPage = CALINT(address, pageSize);
-    address -= tmpPage * pageSize;
-    uint16_t tmpOffset= address;
-    #endif
 
     // Save results
     if (block) {
@@ -266,20 +210,7 @@ uint8_t NandFlashModel_GetDeviceId(
 uint16_t NandFlashModel_GetDeviceSizeInBlocks(
    const struct NandFlashModel *model)
 {
-    OnfiPageParam *pOnfiPageParameter;
-    pOnfiPageParameter = NandGetCurrentOnfiInstance();
-    if (pOnfiPageParameter->onfiCompatiable == 1) {
-        if (pOnfiPageParameter->onfiBlocksPerLun) {
-            return (pOnfiPageParameter->onfiBlocksPerLun * pOnfiPageParameter->onfiLogicalUnits);
-        }
-    }
-#if !defined(OP_BOOTSTRAP_on)
-    return ((1024) / model->blockSizeInKBytes) * model->deviceSizeInMegaBytes;
-#else
-    uint32_t pow;
-    pow = CALPOW((1024 * model->deviceSizeInMegaBytes), model->blockSizeInKBytes);
-    return (0x1 << pow);
-#endif
+    return (1024* model->deviceSizeInMegaBytes) / model->blockSizeInKBytes;
 }
 
 /**
@@ -322,20 +253,7 @@ uint32_t NandFlashModel_GetDeviceSizeInMBytes(
 uint16_t NandFlashModel_GetBlockSizeInPages(
    const struct NandFlashModel *model)
 {
-    OnfiPageParam *pOnfiPageParameter;
-    pOnfiPageParameter = NandGetCurrentOnfiInstance();
-    if (pOnfiPageParameter->onfiCompatiable == 1) {
-        if (pOnfiPageParameter->onfiPagesPerBlock) {
-            return pOnfiPageParameter->onfiPagesPerBlock;
-        }
-    }
-#if !defined(OP_BOOTSTRAP_on)
     return model->blockSizeInKBytes * 1024 / model->pageSizeInBytes;
-#else
-    uint32_t pow;
-    pow = CALPOW((model->blockSizeInKBytes * 1024), model->pageSizeInBytes);
-    return (0x1 << pow);
-#endif
 }
 
 /**
@@ -346,7 +264,7 @@ uint16_t NandFlashModel_GetBlockSizeInPages(
 uint32_t NandFlashModel_GetBlockSizeInBytes(
    const struct NandFlashModel *model)
 {
-    return (model->blockSizeInKBytes *1024);
+    return model->blockSizeInKBytes * 1024;
 }
 
 /**
@@ -356,13 +274,6 @@ uint32_t NandFlashModel_GetBlockSizeInBytes(
 uint32_t NandFlashModel_GetPageDataSize(
    const struct NandFlashModel *model)
 {
-    OnfiPageParam *pOnfiPageParameter;
-    pOnfiPageParameter = NandGetCurrentOnfiInstance();
-    if (pOnfiPageParameter->onfiCompatiable == 1) {
-        if (pOnfiPageParameter->onfiPageSize) {
-            return pOnfiPageParameter->onfiPageSize;
-        }
-    }
     return model->pageSizeInBytes;
 }
 
@@ -373,14 +284,12 @@ uint32_t NandFlashModel_GetPageDataSize(
 uint16_t NandFlashModel_GetPageSpareSize(
    const struct NandFlashModel *model)
 {
-    OnfiPageParam *pOnfiPageParameter;
-    pOnfiPageParameter = NandGetCurrentOnfiInstance();
-    if (pOnfiPageParameter->onfiCompatiable == 1) {
-        if (pOnfiPageParameter->onfiSpareSize) {
-            return pOnfiPageParameter->onfiSpareSize;
-        }
+    if (model->spareSizeInBytes) {
+        return model->spareSizeInBytes;
     }
-    return (model->pageSizeInBytes>>5); /* Spare size is 16/512 of data size */
+    else {
+        return (model->pageSizeInBytes >> 5); /* Spare size is 16/512 of data size */
+    }
 }
 
 /**
@@ -390,11 +299,7 @@ uint16_t NandFlashModel_GetPageSpareSize(
 uint8_t NandFlashModel_GetDataBusWidth(
    const struct NandFlashModel *model)
 {
-    OnfiPageParam *pOnfiPageParameter;
-    pOnfiPageParameter = NandGetCurrentOnfiInstance();
-    if (pOnfiPageParameter->onfiCompatiable == 1) {
-        return (pOnfiPageParameter->onfiBusWidth)? 16: 8; 
-    }
+   
     return (model->options&NandFlashModel_DATABUS16)? 16: 8;
 }
 

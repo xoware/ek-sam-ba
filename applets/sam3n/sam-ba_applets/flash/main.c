@@ -267,7 +267,7 @@ int main(int argc, char **argv)
     uint32_t *pActualEnd = NULL;
     uint8_t error;
 
-     /* Disable watchdog */
+    /* Disable watchdog */
     WDT_Disable( WDT ) ;
 
     /*----------------------------------------------------------

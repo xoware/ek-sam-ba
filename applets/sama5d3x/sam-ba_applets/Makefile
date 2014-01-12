@@ -25,7 +25,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-all: libboard libchip libnandflash libnorflash libpmecc libspiflash liboweeprom applets
+all: libboard libchip libnandflash libnorflash libpmecc libspiflash libsdmmc liboweeprom applets
 
 libchip:
 	(cd ../libraries/libchip_sama5d3x/build/gcc && $(MAKE) DYN=ON -f Makefile clean all)
@@ -66,6 +66,8 @@ applets:
 	(cd nandflash && $(MAKE) DYN=ON -f Makefile clean all) 
 	
 	(cd serialflash && $(MAKE) DYN=ON -f Makefile clean all) 
+	
+	(cd sdmmc && $(MAKE) DYN=ON -f Makefile clean all) 
 	
 	(cd norflash && $(MAKE) DYN=ON -f Makefile clean all) 
 	

@@ -5433,6 +5433,20 @@ typedef struct {
 #define IFLASH_NB_OF_PAGES           (1024) /* Internal FLASH 0 Number of Pages: 1024 */
 #define IFLASH_NB_OF_LOCK_BITS         (16) /* Internal FLASH 0 Number of Lock Bits: 16 */
 #define IRAM_SIZE 0x6000
+#elif defined sam3n0
+#define IFLASH_SIZE 0x8000
+#define IFLASH_PAGE_SIZE              (256) /* Internal FLASH 0 Page Size: 256 bytes */
+#define IFLASH_LOCK_REGION_SIZE     (16384) /* Internal FLASH 0 Lock Region Size: 16 Kbytes */
+#define IFLASH_NB_OF_PAGES            (128) /* Internal FLASH 0 Number of Pages */
+#define IFLASH_NB_OF_LOCK_BITS          (2) /* Internal FLASH 0 Number of Lock Bits */
+#define IRAM_SIZE 0x2000
+#elif defined sam3n00
+#define IFLASH_SIZE 0x4000
+#define IFLASH_PAGE_SIZE              (256) /* Internal FLASH 0 Page Size: 256 bytes */
+#define IFLASH_LOCK_REGION_SIZE     (16384) /* Internal FLASH 0 Lock Region Size: 16 Kbytes */
+#define IFLASH_NB_OF_PAGES             (64) /* Internal FLASH 0 Number of Pages */
+#define IFLASH_NB_OF_LOCK_BITS          (1) /* Internal FLASH 0 Number of Lock Bits */
+#define IRAM_SIZE 0x1000
 #else
   #error Library does not support the specified device.
 #endif

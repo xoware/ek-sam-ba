@@ -232,21 +232,6 @@ uint8_t NandEnableInternalEcc (void)
 */
 uint8_t NandDisableInternalEcc (void)
 {
-    OnfiPageParam *pOnfiPageParameter;
-    pOnfiPageParameter = NandGetCurrentOnfiInstance();
-
-    if (pOnfiPageParameter->onfiCompatiable == 1) {
-        /* Check if the Nandflash has an embedded ECC controller
-           Known memories with this feature :
-           - Manufacturer ID = 2Ch (Micron)
-           - Number of bits ECC = 04h (4-bit ECC means process 34nm)
-           - device size = 1Gb or 2Gb or 4Gb (Number of data bytes per page * Number of pages per block * Number of blocks per unit)  */
-        if ( ((pOnfiPageParameter->manufacturerId & NAND_MFR_MICRON) == NAND_MFR_MICRON) &&
-              (pOnfiPageParameter->onfiEccCorrectability == 0x4) &&
-              ((pOnfiPageParameter->onfiDeviceModel == '1')     //  1G,
-               || (pOnfiPageParameter->onfiDeviceModel == '2')     //  2G
-               || (pOnfiPageParameter->onfiDeviceModel == '4'))) { //  or 4G bits
-
             /* then activate the internal ECC controller */
             WRITE_NAND_COMMAND(NAND_CMD_SET_FEATURE, EBI_NF_ADDR);
             WRITE_NAND_ADDRESS(0x90, EBI_NF_ADDR);
@@ -255,10 +240,6 @@ uint8_t NandDisableInternalEcc (void)
             WRITE_NAND(0x00, EBI_NF_ADDR);
             WRITE_NAND(0x00, EBI_NF_ADDR);
             WRITE_NAND(0x00, EBI_NF_ADDR);
-            NandSwitchEcc(ECC_INTERNAL);
-            return 1;
-        }
-    }
     return 0;
 }
 /**
@@ -300,6 +281,14 @@ uint8_t NandEbiDetect(void)
         }
     }
     if (chip_found == 0) {
+        if (NandIsOnficompatible()) {
+            chip_found = 1;
+            /* even if it is not in device list (it is maybe a new device, but it is ONFI campatible */
+            return chip_found;
+        }
+    }
+
+    if (chip_found == 0) {
 
         /* Then try Nand connected on D0 */
         *ADDR_CCFG_EBICSA &= (uint32_t)(~ EBICSA_NAND_D0_ON_D16 );
@@ -325,6 +314,13 @@ uint8_t NandEbiDetect(void)
                 }
             }
             break;
+        }
+    }
+    if (chip_found == 0) {
+        if (NandIsOnficompatible()) {
+            chip_found = 1;
+            /* even if it is not in device list (it is maybe a new device, but it is ONFI campatible */
+            return chip_found;
         }
     }
     return chip_found;

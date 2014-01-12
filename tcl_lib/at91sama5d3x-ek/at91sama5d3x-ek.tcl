@@ -279,7 +279,7 @@ array set sama5d3x_nandflash {
 array set sama5d3x_nandflash_scripts {
     "Enable NandFlash"             "NANDFLASH::Init"
     "Pmecc configuration"          "NANDFLASH::NandHeaderValue"
-    "Enable OS PMECC parameters"   "NANDFLASH::NandHeaderValue HEADER 0xc0c00405"
+    "Enable OS PMECC parameters"   "NANDFLASH::NandHeaderValue HEADER 0xc0902405"
     "Send Boot File"               "NANDFLASH::SendBootFilePmecc"
     "Erase All"                    "NANDFLASH::EraseAll"
     "Scrub NandFlash"              "NANDFLASH::EraseAll $NANDFLASH::scrubErase"
@@ -289,6 +289,30 @@ array set sama5d3x_nandflash_scripts {
 set NANDFLASH::appletAddr          0x20000000
 set NANDFLASH::appletMailboxAddr   0x20000004
 set NANDFLASH::appletFileName      "$libPath(extLib)/$target(board)/applet-nandflash-sama5d3x.bin"
+
+
+################################################################################
+## SDMMC
+################################################################################
+array set sama5d3x_sdmmc {
+    dftDisplay  1
+    dftDefault  0
+    dftAddress  0x0
+    dftSize     "$GENERIC::memorySize"
+    dftSend     "GENERIC::SendFile"
+    dftReceive  "GENERIC::ReceiveFile"
+    dftScripts  "::sama5d3x_sdmmc_scripts"
+}
+
+array set sama5d3x_sdmmc_scripts {
+    "Enable SDMMC(MCI0)"           "SDMMC::Init 0"
+    "Enable SDMMC(MCI1)"           "SDMMC::Init 1"
+    "Erase All"                    "SDMMC::EraseAll"
+}
+
+set SDMMC::appletAddr          0x20000000
+set SDMMC::appletMailboxAddr   0x20000004
+set SDMMC::appletFileName      "$libPath(extLib)/$target(board)/applet-sdmmc-sama5d3x.bin"
 
 ################################################################################
 ## NORFLASH
