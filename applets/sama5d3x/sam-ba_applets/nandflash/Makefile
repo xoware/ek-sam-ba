@@ -54,7 +54,7 @@ MEMORIES = ddram
 # TRACE_LEVEL_NO_TRACE   0
 
 # Info traces allowed by default
-TR_LEV = 0
+TR_LEV = 5
 
 # Optimization level, put in comment for debugging
 OPTIMIZATION = -Os
@@ -90,7 +90,8 @@ ISP = ..
 
 INSTALLDIR = "../../../../tcl_lib/$(BOARD_DIR)/"
 
-LIBS = -Wl,--start-group -lgcc -lc -lchip_$(CHIP)_gcc_rel -lboard_$(BOARD)_gcc_rel -lnandflash_gcc_rel -lpmecc_gcc_rel -Wl,--end-group
+#LIBS = -Wl,--start-group -lgcc -lc -lchip_$(CHIP)_gcc_rel -lboard_$(BOARD)_gcc_rel -lnandflash_gcc_rel -lpmecc_gcc_rel -Wl,--end-group
+LIBS = -Wl,--start-group -lgcc -lc -lchip_$(CHIP)_gcc_dbg -lboard_$(BOARD)_gcc_dbg -lnandflash_gcc_dbg -lpmecc_gcc_dbg -Wl,--end-group
 
 LIB_PATH = -L$(CHIP_LIB)/lib
 LIB_PATH += -L$(BOARD_LIB)/lib
@@ -132,13 +133,14 @@ CFLAGS += -Wcast-align
 
 # To reduce application size use only integer printf function.
 CFLAGS += -Dprintf=iprintf
-TRACE_LEVEL = 4
+TRACE_LEVEL = 0
 #CFLAGS += -DTRACE_LEVEL=$(TR_LEV)
  #-DDYN_TRACES
 # -mlong-calls  -Wall
 CFLAGS += -ffunction-sections  -D$(MEMORIES)
-#CFLAGS += -DNDEBUG
-CFLAGS += -g $(OPTIMIZATION) $(INCLUDES) -D$(CHIP) -DTRACE_LEVEL=$(TRACE_LEVEL) -DDYN_TRACES
+CFLAGS += -DNDEBUG
+CFLAGS += -g $(OPTIMIZATION) $(INCLUDES) -D$(CHIP) -DTRACE_LEVEL=$(TRACE_LEVEL)
+# -DDYN_TRACES
 ASFLAGS = -Wall -g $(OPTIMIZATION) $(INCLUDES) -D$(CHIP) -D__ASSEMBLY__
 LDFLAGS= -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--entry=entry -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols
 LD_OPTIONAL=-Wl,--print-gc-sections -Wl,--stats

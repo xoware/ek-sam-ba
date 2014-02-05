@@ -49,11 +49,13 @@
 /* DDRAM type */
 #define MT47H64M16HR    0
 #define MT47H128M16RT   1
+#define MT42L64M32D1KL   2
 
 /* Board DDRAM size*/
 
 #define BOARD_DDRAM_SIZE_0        (64*1024*1024)   // 64 MB
 #define BOARD_DDRAM_SIZE_1        (128*1024*1024)  // 128 MB
+#define BOARD_DDRAM_SIZE_2        (256*1024*1024)  // 256 MB
 #define BOARD_SDRAM_SIZE          (32*1024*1024)   // 32 MB
 /* Define clock timeout */
 #define CLOCK_TIMEOUT    0xFFFFFFFF
@@ -175,7 +177,7 @@ int main(int argc, char **argv)
         /* Save communication link type */
         WDT->WDT_MR = WDT_MR_WDDIS;
 #if (DYN_TRACES == 1)
-        //dwTraceLevel = 0;
+        dwTraceLevel = 0;
 #endif
 
 #if (TRACE_LEVEL==0) && (DYN_TRACES==1) 
@@ -195,27 +197,27 @@ int main(int argc, char **argv)
 
 #endif
     
-        //TRACE_INFO("-- EXTRAM Applet %s --\n\r", SAM_BA_APPLETS_VERSION);
-        //TRACE_INFO("-- %s\n\r", BOARD_NAME);
-        //TRACE_INFO("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
-        //TRACE_INFO("INIT command:\n\r");
+//         TRACE_INFO("-- EXTRAM Applet %s --\n\r", SAM_BA_APPLETS_VERSION);
+//         TRACE_INFO("-- %s\n\r", BOARD_NAME);
+//         TRACE_INFO("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
+//         TRACE_INFO("INIT command:\n\r");
 
-        //TRACE_INFO("\tCommunication link type : %lu\n\r", pMailbox->argument.inputInit.comType);
+//         TRACE_INFO("\tCommunication link type : %lu\n\r", pMailbox->argument.inputInit.comType);
         
-        //TRACE_INFO("\tInit EBI Vdd : %s\n\r", (pMailbox->argument.inputInit.VddMemSel)?"3.3V":"1.8V");
-        //BOARD_ConfigureVddMemSel(pMailbox->argument.inputInit.VddMemSel);
+//         TRACE_INFO("\tInit EBI Vdd : %s\n\r", (pMailbox->argument.inputInit.VddMemSel)?"3.3V":"1.8V");
+        BOARD_ConfigureVddMemSel(pMailbox->argument.inputInit.VddMemSel);
 
         /* Configure DDRAM controller */
 
-        if ( pMailbox->argument.inputInit.ramType == 0) 
-        {
-            //TRACE_INFO("\tExternal RAM type : %s\n\r", "SDRAM");
-            BOARD_ConfigureSdram();
-            pMailbox->argument.outputInit.memorySize = BOARD_SDRAM_SIZE;
-        }
-        else 
-        {
-            //TRACE_INFO("\tExternal RAM type : %s\n\r", "DDRAM");
+//         if ( pMailbox->argument.inputInit.ramType == 0) 
+//         {
+//             TRACE_INFO("\tExternal RAM type : %s\n\r", "SDRAM");
+//             BOARD_ConfigureSdram();
+//             pMailbox->argument.outputInit.memorySize = BOARD_SDRAM_SIZE;
+//         }
+//         else 
+//         {
+//             TRACE_INFO("\tExternal RAM type : %s\n\r", "DDRAM");
             BOARD_ConfigureDdram(pMailbox->argument.inputInit.ddrModel);
             if (pMailbox->argument.inputInit.ddrModel == MT47H64M16HR)
             {
@@ -225,20 +227,24 @@ int main(int argc, char **argv)
             {
                 pMailbox->argument.outputInit.memorySize = BOARD_DDRAM_SIZE_1;
             }
-        }
+//             if (pMailbox->argument.inputInit.ddrModel == MT42L64M32D1KL)
+//             {
+                pMailbox->argument.outputInit.memorySize = BOARD_DDRAM_SIZE_2;
+//             }
+//         }
 
         /* Test external RAM access */
-        if (ExtRAM_TestOk()) 
-        {
+         if (ExtRAM_TestOk()) 
+         {
 
             pMailbox->status = APPLET_SUCCESS;
-        }
-        else {
-            pMailbox->status = APPLET_FAIL;
-        }
+         }
+         else {
+             pMailbox->status = APPLET_FAIL;
+         }
         pMailbox->argument.outputInit.bufferAddress = ((uint32_t) &_end);
         pMailbox->argument.outputInit.bufferSize = 0;
-        //TRACE_INFO("\tInit successful.\n\r");
+//        TRACE_INFO("\tInit successful.\n\r");
     }
 
     /* Acknowledge the end of command */
@@ -253,6 +259,9 @@ int main(int argc, char **argv)
         /* Send character */
          DBGU->DBGU_THR= 0x06 ;
     }
+    
+//     DBGU_ConsoleUseDBGU();
+//     printf("Test\n");
     return 0;
 }
 

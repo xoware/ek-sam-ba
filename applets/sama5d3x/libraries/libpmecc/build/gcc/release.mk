@@ -7,7 +7,7 @@
 # TRACE_LEVEL_ERROR      2
 # TRACE_LEVEL_FATAL      1
 # TRACE_LEVEL_NO_TRACE   0
-TRACE_LEVEL = 0
+TRACE_LEVEL = 5
 
 # Optimization level
 # -O1 Optimize
@@ -15,5 +15,5 @@ TRACE_LEVEL = 0
 # -O3 Optimize yet more
 # -O0 Reduce compilation time and make debugging produce the expected results
 # -Os Optimize for size
-OPTIMIZATION = -Os
+OPTIMIZATION = -O0
 

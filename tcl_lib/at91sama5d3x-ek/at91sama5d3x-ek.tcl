@@ -36,6 +36,7 @@ if { [ catch { source "$libPath(extLib)/common/generic.tcl"} errMsg] } {
     exit
 }
 
+
 ################################################################################
 ## BOARD SPECIFIC PARAMETERS
 ################################################################################
@@ -48,9 +49,9 @@ namespace eval BOARD {
     # External SDRAM = 0 / External DDR = 1
     variable extRamType 1
     # Set bus width (16 or 32)
-    variable extRamDataBusWidth 16
-    # DDRAM Model (0: MT47H64M16HR, 1: MT47H128M16RT)
-    variable extDDRamModel 1
+    variable extRamDataBusWidth 32
+    # DDRAM Model (0: MT47H64M16HR, 1: MT47H128M16RT, 2: MT42L64M32D1KL)
+    variable extDDRamModel 2
 
     # Note: DEVICE/ADDRESSES (A2, A1, A0): The A2, A1 or A0 pins are device address inputs 
     # that are hardwired or left not connected for hardware compatibility with other AT24CXX devices.
@@ -134,6 +135,13 @@ array set sama5d3x_ddram {
 if {$BOARD::extRamType == 1} {
     set sama5d3x_ddram(dftDisplay) 1
 }
+if {$BOARD::extRamType == 2} {
+    set sama5d3x_ddram(dftDisplay) 1
+}
+
+set ::GENERIC::traceLevel 5
+set target(traceLevel) 5
+set $::target(traceLevel) 5
 
 set RAM::appletAddr          0x308000
 set RAM::appletMailboxAddr   0x308004
@@ -144,6 +152,8 @@ array set sama5d3x_ddram_scripts {
     "Enable DDRAM"   "GENERIC::Init $RAM::appletAddr $RAM::appletMailboxAddr $RAM::appletFileName [list $::target(comType) $::target(traceLevel) $BOARD::extRamVdd 1 16 $BOARD::extDDRamModel]"
 }
 
+
+puts "-I- Karl Debug 1"
 
 # Initialize SDRAM/DDRAM
 if {[catch {GENERIC::Init $RAM::appletAddr $RAM::appletMailboxAddr $RAM::appletFileName [list $::target(comType) $::target(traceLevel) $BOARD::extRamVdd $BOARD::extRamType $BOARD::extRamDataBusWidth $BOARD::extDDRamModel]} dummy_err] } {
@@ -163,6 +173,8 @@ if {[catch {GENERIC::Init $RAM::appletAddr $RAM::appletMailboxAddr $RAM::appletF
 } else {
         puts "-I- External RAM initialized"
 }
+
+puts "-I- Karl Debug 2"
 ################################################################################
 ## DATAFLASH
 ################################################################################

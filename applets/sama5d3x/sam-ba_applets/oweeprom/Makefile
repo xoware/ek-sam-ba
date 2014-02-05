@@ -84,7 +84,8 @@ ISP = ..
 # tcl_lib directory
 INSTALLDIR = "../../../../tcl_lib/$(BOARD_DIR)/"
 
-LIBS = -Wl,--start-group -lgcc -lc -lchip_$(CHIP)_gcc_rel -lboard_$(BOARD)_gcc_rel -loweeprom_gcc_rel -Wl,--end-group
+#LIBS = -Wl,--start-group -lgcc -lc -lchip_$(CHIP)_gcc_rel -lboard_$(BOARD)_gcc_rel -loweeprom_gcc_rel -Wl,--end-group
+LIBS = -Wl,--start-group -lgcc -lc -lchip_$(CHIP)_gcc_dbg -lboard_$(BOARD)_gcc_dbg -loweeprom_gcc_dbg -Wl,--end-group
 
 LIB_PATH = -L$(CHIP_LIB)/lib
 LIB_PATH += -L$(BOARD_LIB)/lib

@@ -30,7 +30,7 @@
  
 CHIP = sama5d3x
 BOARD = $(CHIP)_ek
-DYN = ON
+DYN = OFF
 PMECC_ALGO_ROM = OFF
 
 SUBMAKE_FILES=debug.mk gcc.mk iar.mk mdk.mk release.mk win.mk linux.mk nandflash.mk
@@ -47,8 +47,8 @@ all: $(BOARD)
 .PHONY: $(BOARD)
 $(BOARD):
 	@echo --- Making $(BOARD)
-	@$(MAKE)  CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) DEBUG=1 $(SUBMAKE_OPTIONS) -f nandflash.mk
-	@$(MAKE) CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) $(SUBMAKE_OPTIONS) -f nandflash.mk
+	@$(MAKE) V=1 CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) DEBUG=1 $(SUBMAKE_OPTIONS) -f nandflash.mk
+	@$(MAKE) V=1 CHIP=$(CHIP) DYN=$(DYN) PMECC_ALGO_ROM=$(PMECC_ALGO_ROM) $(SUBMAKE_OPTIONS) -f nandflash.mk
 
 .PHONY: clean
 clean:

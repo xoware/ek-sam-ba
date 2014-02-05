@@ -37,7 +37,7 @@
 CHIP  = sama5d3x
 BOARD = sama5d3x_ek
 BOARD_DIR = at91sama5d3x-ek
-DYN = OFF
+DYN = ON
 
 # Defines which are the available memory targets for the AT91sama5d3x-EK board.
 MEMORIES = sram 
@@ -50,7 +50,7 @@ MEMORIES = sram
 # TRACE_LEVEL_ERROR      2
 # TRACE_LEVEL_FATAL      1
 # TRACE_LEVEL_NO_TRACE   0
-TRACE_LEVEL = 0
+TRACE_LEVEL = 5
 
 # Optimization level, put in comment for debugging
 OPTIMIZATION = 
