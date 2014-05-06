@@ -46,7 +46,7 @@ namespace eval BOARD {
     # Vdd Memory 1.8V = 0 / Vdd Memory 3.3V = 1
     variable extRamVdd 0
     # External SDRAM = 0 / External DDR2 = 1 / LPDDR = 2
-    variable extRamType 1
+    variable extRamType 2
     # Set bus width (16 or 32)
     variable extRamDataBusWidth 16
     # DDRAM Model (0: MT47H64M16HR, 1: MT47H128M16RT
