@@ -455,7 +455,7 @@ void BOARD_ConfigureLpDdram( void)
     (asynchronous timing, trc, tras, etc.) and into the Configuration Register (number of
     columns, rows, banks, CAS latency and output drive strength) (see Section 8.3 on
     page 35, Section 8.4 on page 39 and Section 80.5 on page 41). */ 
-    MPDDRC->MPDDRC_CR =  MPDDRC_CR_NC_10 |
+    MPDDRC->MPDDRC_CR =  MPDDRC_CR_NC_9 |
                          MPDDRC_CR_NR_14 |
                          MPDDRC_CR_CAS_3_LPDDR2   |
                          MPDDRC_CR_ZQ_SHORT |
