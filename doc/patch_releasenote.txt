@@ -1,0 +1,94 @@
+Patch Release Notes ¡V SAM-BA 2.12
+-----------------------
+Release version: 2.12 patch6
+Release date: 2014,3
+
+Contains
+  - sam-ba_2.12_patch6.exe for Windows (XP, Vista, Seven editions) 
+  - patch6.diff for Linux
+
+New features
+  - add sama5d3-xplained board support
+  - add samd21 support (COM port)
+  - added atm6124 USB CDC signed driver((XP, Vista, Seven editions) 
+   
+Patch 5 Update history
+  - add at91samd20 support (COM port)
+  - add at91sam4n8-xpro, at91sam4n16-xpro support.
+  - lowlevel init improvement for sam3u.
+  - add 24-bit pmecc support for sama5d3x
+  
+Patch 4 Update history
+  - add at91sam4c8, at91sam4c16 support.
+  - add at91sam4e16 support.
+  - add at91sam3n0 at91sam3n00 support.
+  - add at91sam4l support
+  - add 4K page size NAND flash support for at91sam9n12 ,at91sam9x5 and at91sama5d3x (N25Q256A, W25Q256)
+  - add serial flash 4-bytes address mode support for at91sam9n12 ,at91sam9x5 and at91sama5d3x
+  - JLINKARM.DLL updated to 4.58.1.0 (Windows only)
+  - Add support for NAND flash non-onfi auto detection.
+
+Bug fix
+  - fix issue in NAND flash 'tag bad block' (new)
+  - fix NAND FLASH erase all script hangs issue (new)
+  - fix Error with custom board using custom lowlevel init (new)
+  - 'Enable OS PMECC parameters' script behavior improvement (new)
+  - fix 'EraseBlocks wrong block calculation' (new)
+  - fix "Start Recording" function issue in the Linux OS (new)
+  - fix "Start Recording" function issue in the WIN7 (new)
+  - Fix sama5d3x max boot size to 64k.
+  - Force disable NAND internal ECC for sam9n12,sam9x5,sama5d3x.
+  - fix sam9g20 NAND flash usb timeout issue.
+  - fix sam3n1 applet stack overflow.
+  - fix sam3n2 COM port connection issue.
+  - sam3x8 remove the lowlevel init and SDRAM/Nandflash support.
+  - move PMECC_Correction_Algo() function in the applet for sama5d3x.
+  - Update NAND flash driver for sama5d3x to fix non-onfi NAND flash accessing issue.
+
+How to patch/unpatch SAM-BA 2.12 for Windows (XP, Vista, Seven editions) 
+  - Execute sam-ba_2.12_patch6.exe to apply 'patch6'.
+  - Execute Unpatch_patch6.exe to remove this patch.
+  
+How to patch/unpatch SAM-BA 2.12 for Linux
+  - Copy patch6.diff to the directory where sam-ba 2.12 is located.([SAMBA INSTDIR]/sam-ba_cdc_cdc_linux)
+  - Change to this directory.
+  - To apply this patch to entrie directories, use command:
+       patch -p1 --binary <patch6.diff
+  - To remove this patch, use the -R flag:
+       patch -p1 -R --binary <patch6.diff
+
+Contact Information
+---------------------
+For support on the AT91 Software Package please send request to at91@atmel.com
+
+  
+---------------------
+Copyright (c) 2012, Atmel Corporation All rights reserved.
+
+ * ----------------------------------------------------------------------------
+ *         ATMEL Microcontroller Software Support
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2012, Atmel Corporation
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the disclaimer below.
+ *
+ * Atmel's name may not be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ----------------------------------------------------------------------------
