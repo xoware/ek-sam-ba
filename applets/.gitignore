@@ -1,0 +1,8 @@
+*.a
+*.a.txt
+*.bin
+*.elf
+*.elf.txt
+*.map
+*.o
+NUL
