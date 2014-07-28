@@ -249,17 +249,22 @@ if {$pmeccConfig != "none"} {
 
 puts "-I- === Load the u-boot in the next sectors ==="
 send_file {NandFlash} "$ubootFile" $ubootAddr 0 
+compare_file {NandFlash} "$ubootFile" $ubootAddr 0 
 
 puts "-I- === Load the u-boot environment variables ==="
 set fh [open "$ubootEnvFile" w]
 fconfigure $fh -translation binary
 puts -nonewline $fh [set_uboot_env u_boot_variables]
 close $fh
-send_file {NandFlash} "$ubootEnvFile" $ubootEnvAddr 0 
+send_file {NandFlash} "$ubootEnvFile" $ubootEnvAddr 0
+compare_file {NandFlash} "$ubootEnvFile" $ubootEnvAddr 0 
 
 puts "-I- === Load the Kernel image and device tree database ==="
 send_file {NandFlash} "$dtbFile" $dtbAddr 0
+compare_file {NandFlash} "$dtbFile" $dtbAddr 0
+
 send_file {NandFlash} "$kernelFile" $kernelAddr 0
+compare_file {NandFlash} "$kernelFile" $kernelAddr 0
 
 if {$pmeccConfig != "none"} {
    puts "-I- === Enable trimffs ==="
@@ -270,5 +275,6 @@ if {$pmeccConfig != "none"} {
 
 puts "-I- === Load the linux file system ==="
 send_file {NandFlash} "$rootfsFile" $rootfsAddr 0
+compare_file {NandFlash} "$rootfsFile" $rootfsAddr 0
 
 puts "-I- === DONE. ==="
