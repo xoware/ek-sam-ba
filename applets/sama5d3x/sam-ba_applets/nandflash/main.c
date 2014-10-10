@@ -462,6 +462,8 @@ static uint32_t drop_ffs( uint8_t * buf)
     return l;
 }
 
+static Pin pinWP[] = {1 << 25, PIOE, ID_PIOE, PIO_OUTPUT_1, PIO_DEFAULT}; // ExoKey Writeprotect
+
 /*----------------------------------------------------------------------------
  *         Global functions
  *----------------------------------------------------------------------------*/
@@ -499,6 +501,10 @@ int main(int argc, char **argv)
     uint32_t trimPage;
     /* Disable watchdog */
     WDT_Disable( WDT ) ;
+    
+        /* Configure one wire pin */
+    PIO_Configure(pinWP , PIO_LISTSIZE(pinWP));
+    PIO_Set(pinWP);
 
     /* ---------------------------------------------------------- */
     /* INIT:                                                      */
