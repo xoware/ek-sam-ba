@@ -225,8 +225,12 @@ lappend u_boot_variables \
     "stdin=serial" \
     "stdout=serial" \
     "stderr=serial" \
-    "bootargs=console=ttyS0,115200 mtdparts=atmel_nand:256K(bs)ro,512K(ub)ro,256K(env)ro,512K(env_r)ro,512K(dtb),6M(ker),8M(cfg),-(store) root=/dev/ram0 ubi.mtd=7" \
-    "bootcmd=nand read 0x21000000 0x00180000 $dtbSize;nand read 0x22000000 0x00200000 0x600000;bootm 0x22000000 - 0x21000000"
+    "usbnet_devaddr=00:01:02:03:ab:cd" \
+    "usbnet_hostaddr=00:01:02:03:ab:ce" \
+    "ipaddr=192.168.255.1" \
+    "serverip=192.168.255.2" \
+    "bootargs=console=ttyS0,115200 mtdparts=atmel_nand:256K(bs),512K(ub),256K(env),512K(env_r),512K(dtb),6M(ker),8M(cfg),-(store) root=/dev/ram0 ubi.mtd=7" \
+    "bootcmd=nand read 0x20000000 0x200000 0x600000; bootm 0x20000000"
 
 
 puts "-I- === Initialize the NAND access ==="
@@ -265,6 +269,7 @@ compare_file {NandFlash} "$dtbFile" $dtbAddr 0
 
 send_file {NandFlash} "$kernelFile" $kernelAddr 0
 compare_file {NandFlash} "$kernelFile" $kernelAddr 0
+
 
 if {$pmeccConfig != "none"} {
    puts "-I- === Enable trimffs ==="
